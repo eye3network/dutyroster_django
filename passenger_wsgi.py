@@ -1,0 +1,1 @@
+from dutyroster.wsgi import application

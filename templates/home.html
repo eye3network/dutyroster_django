@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<a href="logout"><div class="login-btn"><span class="fa fa-2x fa-sign-out"></span></div></a>
+<div class="jumbotron text-center">
+    <a href="messageNow" id="messageNow" style="position:absolute; top:0; right:0; margin:10px">Message Now</a>
+    <font color="green">{{smsMessage}}</font>
+    <h5>On Duty</h5>
+    {% for value in dutyBoy %}
+        <h1>{{value.cand_name}}</h1>
+        <p>{{value.mdf_date}}</p>
+        <a href="makeExcuse/?id={{value.id}}" class="btn btn-primary">Make Excuse</a><br>
+    {% endfor %}
+</div>
+<div class="container">
+    <div class="row">
+      <div class="col-sm-4" style="margin-bottom:10px;">
+        <h4>Add New Candidate</h4>
+          <form method="POST" action="addCand">
+              {% csrf_token %}
+              <label>Name:</label>
+              <input type="text" name="cand_name" class="form-control" placeholder="Full Name..." required/>
+              <label>Mobile:</label>
+              <input type="text" name="cand_mobile" class="form-control" pattern="[6-9]{1}[0-9]{9}" placeholder="Mobile..." required />
+              <input type="submit" class="btn btn-primary" value="Add Candidate" style="margin-top: 10px;" />
+          </form>
+      </div>
+      <div class="col-sm-8" style="margin-bottom:10px;">
+        <h4>Candidates List</h4>
+        <form method="POST" action="chngStatus">
+
+            {% csrf_token %}
+            <table class="table table-responsive">
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>Active</th>
+                    <th>Modified Date</th>
+                    <th>Actual Date</th>
+                    <th>Excuse</th>
+                </tr>
+                {% for value in candList %}
+                    <tr>
+                        <td><input type="radio" name="cand_id" value="{{value.id}}" required></td>
+                        <td>{{ value.cand_name }}</td>
+                        <td>{{ value.cand_mobile }}</td>
+                        <td>{{ value.is_active }}</td>
+                        <td>{{ value.mdf_date }}</td>
+                        <td>{{ value.act_date }}</td>
+                        <td>{{ value.excuse }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <select class="form-control" name="candStatus" id="cand_action" required>
+                <option value=''>Choose Action</option>
+                <option value='True'>Activate</option>
+                <option value='False'>Deactivate</option>
+                <option value='Delete'>Delete</option>
+            </select>
+            <input type="submit" value="Apply" class="btn btn-primary" style="width: 100%; margin-top:10px;">
+        </form>
+      </div>
+    </div>
+</div>
+<script>
+$(document).ready(function(){
+    $("#messageNow").click(function(){
+        $(this).hide();
+    });
+    $("#cand_action").change(function(){
+        var option = document.getElementById("cand_action").value;
+        if(option == "Delete"){
+            if(confirm('Are you sure to choose this option?')){
+                //do nothing
+            }else{
+                $("#cand_action").val('');
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

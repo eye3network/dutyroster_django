@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="login-btn" onclick="showLogin()"><span class="fa fa-2x fa-sign-in"></span></div>
+<div class="login-box my-border">
+  <div class="login-form" style="padding: 8px;">
+    <span id="login_msg"></span>
+    <legend>I'm Locked</legend>
+    <input type="password" id="pwd" class="form-control" required>
+    <button id="login" class="btn btn-primary" style="margin-top: 10px;">Login</button>
+  </div>
+</div>
+<div class="jumbotron text-center">
+    <h5>On Duty</h5>
+    {% for value in dutyBoy %}
+        <h1>{{value.cand_name}}</h1>
+        <p>{{value.mdf_date}}</p>
+    {% endfor %}
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Candidates List</h4>
+            <div class="duty-color">On Duty</div>
+            <div class="excuse-color">Excused</div>
+            <div class="table-responsive">
+              <table class="table">
+                  <tr>
+                      <th>Name</th>
+                      <th>Modified Date</th>
+                      <th>Actual Date</th>
+                  </tr>
+                  {% for value in candList %}
+                      <tr class="{{value.excuse}} {{value.mdf_date}}">
+                          <td>{{ value.cand_name }}</td>
+                          <td>{{ value.mdf_date }}</td>
+                          <td>{{ value.act_date }}</td>
+                      </tr>
+                  {% endfor %}
+              </table>
+            </div>
+        </div>
+        <div class="col-sm-4" style="margin-bottom: 10px;">
+            <h4>Duty History</h4>
+            <table class="table table-responsive">
+                <tr>
+                    <th>Name</th>
+                    <th>Duty Date</th>
+                    <th>Actual Date</th>
+                </tr>
+                {% for value in page_obj %}
+                    <tr class="{{value.excuse}} {{value.mdf_date}}">
+                        <td>{{ value.cand_name }}</td>
+                        <td>{{ value.mdf_date }}</td>
+                        <td>{{ value.act_date }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+            
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#login").click(function(){
+            var pwd = $("#pwd").val();
+            if(pwd == null || pwd == ""){
+                $("#login_msg").html("<font color='red'>Password Required</font>");
+            }else if(pwd == "pass"){
+                $("#login_msg").html("<font color='green'>Login Success</font>");
+                window.location.assign("auth");
+            }else{
+                $("#login_msg").html("<font color='red'>Wrong Password</font>");
+            }
+        });
+        var today = new Date().getFullYear()+'-'+("0"+(new Date().getMonth()+1)).slice(-2)+'-'+("0"+new Date().getDate()).slice(-2);
+        $("tr." + today).css("background-color", "#7cfc00");
+        $("tr.True").css("background-color", "#ff6347");
+    });
+    function showLogin(){
+        $(".login-box").slideToggle();
+        $("#login_msg").html("");
+    }
+</script>
+{% endblock %}
